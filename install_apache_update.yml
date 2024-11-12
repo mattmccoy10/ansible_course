@@ -1,0 +1,47 @@
+---
+- hosts: all
+  become: true
+  tasks:
+
+  - name: update repository index
+    ansible.builtin.apt:
+      update_cache: yes
+    when: ansible_distribution == "ubuntu"
+
+  - name: install apache2 package
+    ansible.builtin.apt:
+      name: apache2
+      state: latest
+    when: ansible_distribution == "ubuntu"
+
+  - name: install support for php
+    ansible.builtin.apt:
+      name:  libapache2-mod-php
+      state: latest
+    when: ansible_distribution == "ubuntu"
+
+  - name: install httpd package
+    ansible.builtin.dnf:
+      name: httpd
+      use_backend: dnf
+      state: latest
+
+  - name: update repository index
+    ansible.builtin.dnf:
+      use_backend: dnf
+      update_cache: yes
+    when: ansible_distribution == "fedora"
+    
+  - name: install httpd package
+    ansible.builtin.dnf:
+      use_backend: dnf
+      name: httpd
+      state: latest
+    when: ansible_distribution == "fedora"
+ 
+  - name: add php support for apache
+    ansible.builtin.yum:
+      use_backend: dnf
+      name: php
+      state: latest
+    when: ansible_distribution == "fedora"
